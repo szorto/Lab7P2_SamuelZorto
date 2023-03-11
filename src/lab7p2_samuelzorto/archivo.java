@@ -1,6 +1,8 @@
 package lab7p2_samuelzorto;
 
-public class archivo {
+import java.io.Serializable;
+
+public class archivo implements Serializable{
     private String nombre, link, extension;
     private double tamanio;
 
@@ -48,7 +50,7 @@ public class archivo {
 
     @Override
     public String toString() {
-        return "archivo{" + "nombre=" + nombre + ", link=" + link + ", extension=" + extension + ", tamanio=" + tamanio + '}';
+        return nombre;
     }
     
     

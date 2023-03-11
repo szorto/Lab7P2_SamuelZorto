@@ -4,7 +4,10 @@
  */
 package lab7p2_samuelzorto;
 
+import java.util.ArrayList;
 import java.util.Random;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -20,6 +23,21 @@ public class PRINCIPAL extends javax.swing.JFrame {
      */
     public PRINCIPAL() {
         initComponents();
+        
+        admin au = new admin("./Archivos.sz");
+        au.cargarArchivo();
+        arc = au.getListaArchivo();
+        
+        adminCarpeta ac = new adminCarpeta("./Carpetas.sz");
+        ac.cargarCarpeta();
+        car = ac.getListaCarpeta();
+        
+        
+        
+        //hilos
+        bitacora b=new bitacora(jpb_link);
+        Thread proceso = new Thread(b);
+        proceso.start();
     }
 
     /**
@@ -41,6 +59,11 @@ public class PRINCIPAL extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jd_crearCarpeta = new javax.swing.JDialog();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        pp_hilo = new javax.swing.JPopupMenu();
+        jmi_hilo = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jl_algo = new javax.swing.JList<>();
@@ -126,20 +149,67 @@ public class PRINCIPAL extends javax.swing.JFrame {
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel5.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(33, 39, 126));
+        jLabel5.setText("Crear Carpeta");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(151, 151, 151)
+                .addComponent(jLabel5)
+                .addContainerGap(153, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel5)
+                .addContainerGap(477, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jd_crearCarpetaLayout = new javax.swing.GroupLayout(jd_crearCarpeta.getContentPane());
+        jd_crearCarpeta.getContentPane().setLayout(jd_crearCarpetaLayout);
+        jd_crearCarpetaLayout.setHorizontalGroup(
+            jd_crearCarpetaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jd_crearCarpetaLayout.setVerticalGroup(
+            jd_crearCarpetaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        jmi_hilo.setText("jMenuItem1");
+        pp_hilo.add(jmi_hilo);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
 
         jl_algo.setFont(new java.awt.Font("Liberation Sans", 0, 24)); // NOI18N
         jl_algo.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Mi Unidad", "Destacados", "Papelara" };
+            String[] strings = { "Mi Unidad", "Destacados", "Papelera" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
+        });
+        jl_algo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jl_algoMouseClicked(evt);
+            }
         });
         jScrollPane1.setViewportView(jl_algo);
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
         jt_archivos.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jt_archivos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jt_archivosMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jt_archivos);
 
         jb_crearArchivo.setText("Crear Archivo");
@@ -150,6 +220,11 @@ public class PRINCIPAL extends javax.swing.JFrame {
         });
 
         jb_crearCarpeta.setText("Crear Carpeta");
+        jb_crearCarpeta.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jb_crearCarpetaMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -237,23 +312,22 @@ public class PRINCIPAL extends javax.swing.JFrame {
             }
         }
         tamanio = (Integer) js_tamanio.getValue();
-        archivo a = new archivo(nombre, link, extension, tamanio);
+        a = new archivo(nombre, link, extension, tamanio);
         System.out.println(nombre);
         System.out.println(extension);
         System.out.println(link);
         System.out.println(tamanio);
 
+        
+        admin au = new admin("./Archivos.sz");
+        au.cargarArchivo();
+        arc = au.getListaArchivo();
+        
+        au.setArchivos(a);
+        au.escribirArchivo();
+        link = "";
         if (jt_archivos.isSelectionEmpty()) {
-            DefaultTreeModel m = (DefaultTreeModel) jt_archivos.getModel();
-            DefaultMutableTreeNode raiz = (DefaultMutableTreeNode) m.getRoot();
-            DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(a);
-            raiz.add(nodo);
-            raiz.add(new DefaultMutableTreeNode("folder always"));
-            raiz.add(new DefaultMutableTreeNode("folder never", true));
-            
-            
-            m.reload();
-             
+
 //            int row = jt_personajes.getClosestRowForLocation(evt.getX(), evt.getY());
 //            jt_personajes.setSelectionRow(row);
 //            Object v1 = jt_personajes.getSelectionPath().getLastPathComponent();
@@ -262,6 +336,154 @@ public class PRINCIPAL extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_jb_crearArchivo2MouseClicked
+
+    private void jl_algoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jl_algoMouseClicked
+
+        if (jl_algo.getSelectedValue().equals("Mi Unidad")) {
+            admin au = new admin("./Archivos.sz");
+            
+            DefaultTreeModel m = (DefaultTreeModel) jt_archivos.getModel();
+            DefaultMutableTreeNode raiz = (DefaultMutableTreeNode) m.getRoot();
+            raiz.removeAllChildren();
+
+            for (archivo t : arc) {
+                DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(t);
+                raiz.add(nodo);
+            }
+
+            for (carpeta t : car) {
+                DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(t);
+                for (archivo o : t.getArc()) {
+                    DefaultMutableTreeNode nodo1 = new DefaultMutableTreeNode(o);
+                    nodo.add(nodo1);
+                }
+                raiz.add(nodo);
+            }
+            m.reload();
+
+//            DefaultTreeModel m = (DefaultTreeModel) jt_archivos.getModel();
+//            DefaultMutableTreeNode raiz = (DefaultMutableTreeNode) m.getRoot();
+//            DefaultMutableTreeNode nodo = new DefaultMutableTreeNode(a);
+//            raiz.add(nodo);
+//            m.reload();
+        } else if (jl_algo.getSelectedValue().equals("Destacados")) {
+            DefaultTreeModel m = (DefaultTreeModel) jt_archivos.getModel();
+            DefaultMutableTreeNode raiz = (DefaultMutableTreeNode) m.getRoot();
+            raiz.removeAllChildren();
+            m.reload();
+
+        } else if (jl_algo.getSelectedValue().equals("Papelera")) {
+            DefaultTreeModel m = (DefaultTreeModel) jt_archivos.getModel();
+            DefaultMutableTreeNode raiz = (DefaultMutableTreeNode) m.getRoot();
+            raiz.removeAllChildren();
+            m.reload();
+
+        }
+
+    }//GEN-LAST:event_jl_algoMouseClicked
+
+    private void jb_crearCarpetaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jb_crearCarpetaMouseClicked
+//        jd_crearCarpeta.setModal(true);
+//        jd_crearCarpeta.pack();
+//        jd_crearCarpeta.setLocationRelativeTo(this);
+//        jd_crearCarpeta.setVisible(true);
+
+        nombreCarpeta = JOptionPane.showInputDialog(this, "Ingrese el nombre de la carpeta");
+        cantt = 0;
+        while (cantt <= 0) {
+            String cant = JOptionPane.showInputDialog(this, "Ingrese cantidad de archivos que desea ingresar en la carpeta (Debe ser mayor a 0)");
+            cantt = Integer.parseInt(cant);
+
+        }
+
+        for (int i = 0; i < 5; i++) {
+            int random = new Random().nextInt((9 - 0) + 1) + 0;
+            int random1 = new Random().nextInt((1 - 0) + 1) + 0;
+            switch (random1) {
+                case 0:
+                    link += random;
+                    break;
+                case 1:
+                    int random2 = new Random().nextInt((1 - 0) + 1) + 0;
+                    switch (random2) {
+                        case 0:
+                            int random3 = new Random().nextInt((90 - 65) + 1) + 65;
+                            char rand = (char) random3;
+                            link += rand;
+                            break;
+                        case 1:
+                            int random4 = new Random().nextInt((122 - 97) + 1) + 97;
+                            char rando = (char) random4;
+                            link += rando;
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        c = new carpeta(nombreCarpeta, link);
+        link = "";
+        
+        
+        //aqui se crean los nuevos archivos
+        for (int i = 0; i < cantt; i++) {
+            nombre = JOptionPane.showInputDialog(this, "Ingrese nombre de archivo");
+            extension = JOptionPane.showInputDialog(this, "Igrese la extension del archivo");
+            for (int j = 0; j < 10; j++) {
+                int random = new Random().nextInt((9 - 0) + 1) + 0;
+                int random1 = new Random().nextInt((1 - 0) + 1) + 0;
+                switch (random1) {
+                    case 0:
+                        link += random;
+                        break;
+                    case 1:
+                        int random2 = new Random().nextInt((1 - 0) + 1) + 0;
+                        switch (random2) {
+                            case 0:
+                                int random3 = new Random().nextInt((90 - 65) + 1) + 65;
+                                char rand = (char) random3;
+                                link += rand;
+                                break;
+                            case 1:
+                                int random4 = new Random().nextInt((122 - 97) + 1) + 97;
+                                char rando = (char) random4;
+                                link += rando;
+                                break;
+                        }
+                        break;
+                }
+            }
+            
+            tamanio =  Integer.parseInt(JOptionPane.showInputDialog(this, "Ingrese tamanio"));
+            a = new archivo(nombre, link, extension, tamanio);
+            c.getArc().add(a);
+            link = "";
+        }
+        
+        
+        adminCarpeta ac = new adminCarpeta("./Carpetas.sz");
+        ac.cargarCarpeta();
+        car = ac.getListaCarpeta();
+        
+        ac.setCarpetas(c);
+        ac.escribirCarpeta();
+        
+        
+        
+        
+        System.out.println(car);
+        
+        
+    }//GEN-LAST:event_jb_crearCarpetaMouseClicked
+
+    private void jt_archivosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jt_archivosMouseClicked
+        if(SwingUtilities.isRightMouseButton(evt)){
+            int row = jt_archivos.getClosestRowForLocation(evt.getX(), evt.getY());
+            jt_archivos.setSelectionRow(row);
+            pp_hilo.show(evt.getComponent(), evt.getX(), evt.getY());
+            
+        }
+    }//GEN-LAST:event_jt_archivosMouseClicked
 
     /**
      * @param args the command line arguments
@@ -303,22 +525,34 @@ public class PRINCIPAL extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton jb_crearArchivo;
     private javax.swing.JButton jb_crearArchivo2;
     private javax.swing.JButton jb_crearCarpeta;
     private javax.swing.JDialog jd_crearArchivo;
+    private javax.swing.JDialog jd_crearCarpeta;
     private javax.swing.JList<String> jl_algo;
+    private javax.swing.JMenuItem jmi_hilo;
     private javax.swing.JProgressBar jpb_link;
     private javax.swing.JSpinner js_tamanio;
     private javax.swing.JTree jt_archivos;
     private javax.swing.JTextField jtf_extension;
     private javax.swing.JTextField jtf_nombre;
+    private javax.swing.JPopupMenu pp_hilo;
     // End of variables declaration//GEN-END:variables
     private String nombre, link = "", extension;
     private double tamanio;
+
+    private ArrayList<archivo> arc = new ArrayList();
+    private ArrayList<carpeta> car = new ArrayList();
+    archivo a;
+    carpeta c;
+    int cantt;
+    private String nombreCarpeta;
 
 }

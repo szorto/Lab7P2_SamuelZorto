@@ -1,8 +1,9 @@
 package lab7p2_samuelzorto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class carpeta {
+public class carpeta implements Serializable{
     private String nombre, link;
     private ArrayList<archivo> arc = new ArrayList();
     private ArrayList<carpeta> car = new ArrayList();
@@ -49,7 +50,7 @@ public class carpeta {
 
     @Override
     public String toString() {
-        return "carpeta{" + "nombre=" + nombre + ", link=" + link + ", arc=" + arc + ", car=" + car + '}';
+        return nombre;
     }
     
     
