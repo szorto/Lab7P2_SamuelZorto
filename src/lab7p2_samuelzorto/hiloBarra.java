@@ -2,7 +2,7 @@ package lab7p2_samuelzorto;
 
 import javax.swing.JProgressBar;
 
-public class hiloBarra implements Runnable {
+public class hiloBarra extends Thread {
 
     private JProgressBar barra;
     private boolean vive;
@@ -40,18 +40,16 @@ public class hiloBarra implements Runnable {
         this.tamanio = tamanio;
     }
 
-    
-    
     @Override
     public void run() {
+        double a = 100000000 / tamanio;
         while (true) {
-            if(vive){
-                barra.setValue(barra.getValue()+1);
-                
-                
-                if(barra.getValue()==100000000){
-                    vive=false;
-                }    
+            if (vive) {
+                barra.setValue((int) (barra.getValue() + a));
+
+                if (barra.getValue() == 100000000) {
+                    vive = false;
+                }
             }
             try {
                 Thread.sleep(1000);

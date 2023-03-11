@@ -183,7 +183,12 @@ public class PRINCIPAL extends javax.swing.JFrame {
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jmi_hilo.setText("jMenuItem1");
+        jmi_hilo.setText("Descargar");
+        jmi_hilo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmi_hiloActionPerformed(evt);
+            }
+        });
         pp_hilo.add(jmi_hilo);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -485,6 +490,33 @@ public class PRINCIPAL extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jt_archivosMouseClicked
 
+    private void jmi_hiloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmi_hiloActionPerformed
+        DefaultTreeModel m = (DefaultTreeModel) jt_archivos.getModel();
+        DefaultMutableTreeNode raiz = (DefaultMutableTreeNode) m.getRoot();
+        Object v1 = jt_archivos.getSelectionPath().getLastPathComponent();
+        nodoo = (DefaultMutableTreeNode) v1;
+        
+        
+        hiloBarra hc = new hiloBarra();
+                hc.setTamanio(40);
+                hc.start();
+        for (archivo t : arc) {
+            if(t.equals(nodoo.getUserObject())){
+                hiloBarra hb = new hiloBarra();
+                hb.setTamanio(t.getTamanio());
+                hb.start();
+            }
+        }
+        
+        for (carpeta t : car) {
+            if(t.equals(nodoo.getUserObject())){
+                
+            }
+        }
+        
+        
+    }//GEN-LAST:event_jmi_hiloActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -554,5 +586,6 @@ public class PRINCIPAL extends javax.swing.JFrame {
     carpeta c;
     int cantt;
     private String nombreCarpeta;
+    DefaultMutableTreeNode nodoo;
 
 }
